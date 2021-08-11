@@ -85,7 +85,7 @@ router.hooks({
       case "Home":
         axios
           .get(
-            `https://api.openweathermap.org/data/2.5/weather?appid=${process.env.WEATHER_API_KEY}&q=st.%20louis`
+            `https://api.openweathermap.org/data/2.5/weather?q=st.%20louis&appid=${process.env.WEATHER_API_KEY}`
           )
           .then(response => {
             state.Home.weather = {};
