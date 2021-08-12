@@ -1,8 +1,32 @@
 const express = require("express");
-const app = express();
+const greetings = require("./routers/greetings");
+const mongoose = require("mongoose");
 // Import ^^^^^
 
-// Instancsial
+const app = express();
+
+mongoose.connect("mongodb://localhost/pizzeria");
+const db = mongoose.connection;
+
+db.on("error", console.error.bind(console, "Connection error:"));
+db.once(
+  "open",
+  console.log.bind(console, "Successfully opened connection to Mongo!")
+);
+
+// Instansiation
+const logging = (request, response, next) => {
+  console.log(`${request.method} ${request.url} ${Date.now()}`);
+  next();
+};
+
+app.use(express.json());
+app.use(logging);
+
+app.use(greetings);
+
+mongoose.connect("mongodb://localhost/pizzaStore");
+
 app.get("/status", (request, response) => {
   response.send(JSON.stringify({ message: "Service healthy" }));
 });
@@ -22,9 +46,10 @@ app
     );
   });
 
-app.route("/greet/:name").get((request, response) => {
+app.route("/greetings/:name").get((request, response) => {
   const name = request.params.name;
   response.status(418).json({ message: `Hello ${name}` });
 });
 
-app.listen(4040, () => console.log("Listening on port 4040"));
+const port = process.env.PORT || 4040;
+app.listen(port, () => console.log(`Listening on port ${port}`));
