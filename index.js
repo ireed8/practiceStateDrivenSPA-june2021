@@ -68,18 +68,31 @@ router.hooks({
         : "Home";
 
     switch (page) {
-      case "Blog":
-        state.Blog.posts = [];
+      case "Pizza":
         axios
-          .get("https://jsonplaceholder.typicode.com/posts/")
+          .get(`${process.env.API}/pizzas`)
           .then(response => {
-            response.data.forEach(post => {
-              state.Blog.posts.push(post);
-            });
+            state[page].pizzas = response.data;
             done();
-            // console.log(state.Blog.posts);
           })
-          .catch(err => console.log(err));
+          .catch(error => {
+            console.log("I died trying to get Pizza", error);
+            done();
+          });
+        break;
+
+      case "Blog":
+        (state.Blog.posts = []),
+          axios
+            .get("https://jsonplaceholder.typicode.com/posts/")
+            .then(response => {
+              response.data.forEach(post => {
+                state.Blog.posts.push(post);
+              });
+              done();
+              // console.log(state.Blog.posts);
+            })
+            .catch(err => console.log(err));
         break;
 
       case "Home":
